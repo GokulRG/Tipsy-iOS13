@@ -18,6 +18,7 @@ class CalculatorViewController: UIViewController {
     
     var calculatorBrain = CalculatorBrain()
 
+
     @IBAction func tipChanged(_ sender: UIButton) {
         resetSelectedTip()
         sender.isSelected = true
@@ -37,16 +38,25 @@ class CalculatorViewController: UIViewController {
     
     @IBAction func stepperValueChanged(_ sender: UIStepper) {
         splitNumberLabel.text = String(format: "%.0f", sender.value)
+        calculatorBrain.setSplitPersons(sender.value)
     }
     
     @IBAction func calculatePressed(_ sender: UIButton) {
-        print(calculatorBrain.getSelectedTip())
+        calculatorBrain.setAmount(Float(billTextField.text!)!)
+        self.performSegue(withIdentifier: "getResultSegue", sender: self)
     }
     
     func resetSelectedTip() {
+        billTextField.endEditing(true)
         zeroPctButton.isSelected = false
         tenPctButton.isSelected = false
         twentyPctButton.isSelected = false
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let destinationVC = segue.destination as! ResultsViewController
+        destinationVC.total = calculatorBrain.getResult()
+        destinationVC.calculatorBrain = calculatorBrain
     }
 }
 
